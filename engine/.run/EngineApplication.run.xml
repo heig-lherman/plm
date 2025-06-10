@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="EngineApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <module name="sibatcore-mrq.engine.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ch.vd.ptep.mrq.engine.EngineApplication" />
+    <option name="WORKING_DIRECTORY" value="file://$MODULE_WORKING_DIR$" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="ch.vd.ptep.mrq.engine.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

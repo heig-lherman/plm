@@ -1,0 +1,107 @@
+rules:
+  BT5065:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GBEZ
+    label: Alphanumérique, 40 positions, 3 caractères au minimum, valeurs vides autorisées
+    errorMessage: La désignation du bâtiment n'est pas correctement saisie. Veuillez corriger.
+    expression: |-
+      GBEZ NULL OR (LENGTH >=3 AND <=40)
+  BT5487:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GEBNR
+    label: Alphanumérique, 12 positions, valeurs vides autorisées, 0 non admis en début de chaîne
+    errorMessage: Le numéro officiel de bâtiment n'est pas correctement saisi. Veuillez corriger.
+    expression: |-
+      GEBNR NULL OR (LENGTH <=12 AND COUNT(LEADINGZERO)=0)
+  BO6791:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GKODN
+    label: La seconde coordonnée est obligatoire si une est renseignée.
+    errorMessage: La seconde coordonnée est obligatoire si une est renseignée. Veuillez compléter.
+    expression: |-
+      GKODN NOT NULL
+      WHERE GKODE NOT NULL
+  BO4539:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GSTAT
+    label: Le statut du bâtiment est obligatoire.
+    errorMessage: Le statut du bâtiment est obligatoire. Veuillez compléter.
+    expression: |-
+      GSTAT NOT NULL
+  BQ9980:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GSTAT
+    label: Les bâtiments avec une année de démolition sont démolis.
+    errorMessage: Les bâtiments avec une année de démolition sont démolis. Veuillez corriger.
+    expression: |-
+      GSTAT=1007
+      WHERE GABBJ NOT NULL
+  BQ1515:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GKAT
+    label: Les habitations provisoires ont une et une seule entrée.
+    errorMessage: Les habitations provisoires ont une et une seule entrée. Veuillez corriger.
+    expression: |-
+      COUNT(EDID)=1
+      WHERE GKAT=1010
+  BO5524:
+    object: BUILDING
+    level: WARNING
+    field:
+      name: GKLAS
+    label: La classe de bâtiment n'est pas admise pour les habitations provisoires, à l'exception des résidences mobiles.
+    errorMessage: La classe de bâtiment n'est pas admise pour les habitations provisoires, à l'exception des résidences mobiles. Veuillez corriger.
+    expression: |-
+      GKLAS NULL OR =1212
+      WHERE GKAT=1010
+  VDBQ1785:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: WAREA
+    label: La somme des surfaces de plancher des bâtiments d'habitation et des immeubles collectifs ne peut pas dépasser la surface de plancher totale du terrain multipliée par le coefficient d'occupation du sol.
+    errorMessage: La somme des surfaces de plancher des bâtiments d'habitation et des immeubles collectifs ne peut pas dépasser la surface de plancher totale du terrain multipliée par le coefficient d'occupation du sol. Veuillez corriger.
+    expression: |-
+      SUM(WAREA) <= GAREA * GASTW
+      WHERE GKAT IN (1020|1030)
+  BQ7305:
+    object: BUILDING
+    level: ERROR
+    field:
+      name: GKLAS
+    label: >-
+      Les bâtiments d'habitation et les immeubles collectifs sont des bâtiments destinés essentiellement à l'habitation; les des résidences mobiles sont des habitations provisoires;
+      les habitats communautaires, les hôtels et les autres bâtiments d'hébergement de tourisme sont des bâtiments partiellement à usage d'habitation;
+      les immeubles de bureau, les bâtiments commerciaux, les bâtiments industriels, les bâtiments à usage récréatif ou culturel, les salles de sport et les édifices culturels et religieux des bâtiments partiellement à usage d'habitation ou sans usage d'habitation;
+      les bâtiments pour les transports et les communications, les bâtiments d'exploitation agricole, les autres bâtiments non classés ailleurs, les autres bâtiments pour l'hébergement collectif, les bâtiments pour la garde d'animaux, les bâtiments pour les cultures végétales et les autres bâtiments d'exploitation agricole sont des bâtiments partiellement à usage d'habitation, des bâtiments sans usage d'habitation ou des constructions particulières;
+      les réservoirs, silos et entrepôts, ainsi que les restaurants et bars dans des bâtiments sans usage résidentiel sont des bâtiments sans usage d'habitation ou des constructions particulières;
+      les monuments historiques ou classés sont des constructions particulières;
+      cette règle ne concerne pas les bâtiments démolis.
+    errorMessage: La catégorie de bâtiment correspond toujours à la classe de bâtiment. Veuillez corriger.
+    expression: |-
+      (GKLAS IN (1110|1121|1122) AND GKAT in (1020|1030))
+      OR
+      (GKLAS=1212 AND GKAT=1010)
+      OR
+      (GKLAS IN (1130|1211|1212) AND GKAT=1040)
+      OR
+      (GKLAS IN (1220|1230|1251|1261-1265|1272) AND GKAT IN (1040|1060))
+      OR
+      (GKLAS IN (1241|1242|1271|1274-1278) AND GKAT IN (1040|1060|1080))
+      OR
+      (GKLAS IN (1231|1252) AND GKAT IN (1060|1080))
+      OR
+      (GKLAS=1273 AND GKAT=1080)
+      WHERE GKLAS NOT NULL AND GSTAT<>1007
